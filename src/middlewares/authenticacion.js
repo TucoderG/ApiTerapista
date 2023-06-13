@@ -36,7 +36,7 @@ async function authenticacionToken(req, res, next){
 async function authenticacionRolPaciente(req, res, next){
     try{
         
-        if(req.usuario[2] != 'Paciente' || req.usuario[2] != 'Admin') throw new Error(em.ROL_NO_PERMITIDO);
+        if(req.usuario[2] != 'Paciente') throw new Error(em.ROL_NO_PERMITIDO);
         if(!req.body.id_usuario){
             if(req.usuario[0] != req.body.dni_paciente) throw new Error(em.NO_MANIPULAR_OTROS);
         }else{
@@ -67,7 +67,7 @@ async function noRolPaciente(req, res, next){
 async function authenticacionRolTerapista(req, res, next){
     try{
         
-        if(req.usuario[2] != 'Terapista' || req.usuario[2] != 'Admin') throw new Error(em.ROL_NO_PERMITIDO);
+        if(req.usuario[2] != 'Terapista') throw new Error(em.ROL_NO_PERMITIDO);
         if(req.usuario[0] != req.body.id_usuario) throw new Error(em.NO_MANIPULAR_OTROS);
         
         return next()
