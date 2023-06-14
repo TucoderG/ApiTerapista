@@ -79,30 +79,19 @@ function create_archive(nombreArchivo, data_set_title, data_set_body, pathExcel)
         
         if(err) throw new Error("Error al escribir el archivo.");
 
-        //funcion para descargar el archivo 
-            
-        //PETICION POSTMAN
-        // function downloadFile(){return res.download(pathExcel);}
-        // downloadFile();
-            
-        //PETICION WEB para descargar el archivo
-        /*res.status(200).download(pathExcel, (err) => {
-            if(err) throw new Error(em.NO_DESCARGAR_ARCHIVO);
-            // Check if headers have been sent
-            if(!res.headersSent) throw new Error('No se pudo enviar los headers.'); 
-                
-        });*/
-
         console.log('Archivo descargado en el sistema.');
 
+        // En el caso de Web
         //funcion para eliminar el archivo
         // fs.rm(pathExcel, (err) =>{
         //     if(err) throw new Error("Error al eliminar el archivo..");
         // });
-        console.log("Archivo elimidado del sistema.")
+        //console.log("Archivo elimidado del sistema.")
         
     });
     
+            
+    //return pathExcel;
 }
 
 

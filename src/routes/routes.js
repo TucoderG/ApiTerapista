@@ -5,7 +5,7 @@ const pacienteDB = require('../controllers/pacienteDB');
 const turnoDB = require('../controllers/turnoBD');
 const terapistaDB = require('../controllers/terapistaDB');
 const funcionesGeneralesDB = require('../controllers/funcionesGeneralesDB');
-const controller = require('../controllers/controller');
+const controller = require('../controllers/session');
 const { authenticacionToken, authenticacionRolPaciente, authenticacionRolTerapista, authenticacionAdmin, noRolPaciente } = require('../middlewares/authenticacion');
 
 
@@ -402,5 +402,8 @@ router.get('/getExcel/', authenticacionToken, authenticacionRolPaciente, [
         .isNumeric(),
     ],
     excelDB.getExcel);
+
+// Peticion en Web
+// router.get('/getExcel/', excelDB.getExcel);
 
 module.exports = router;

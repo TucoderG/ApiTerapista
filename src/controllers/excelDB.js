@@ -13,6 +13,7 @@ const getExcel = async (req, res) =>{
     const mes = (date.getUTCMonth()) + 1;
     const anio = date.getUTCFullYear();
 
+    // || 44114340 (en Web)
     const dni = req.body.id_usuario;
     const titulos = ["nro_turno", "nro_terapista", "fecha", "desde", "asistencia"];
 
@@ -27,9 +28,12 @@ const getExcel = async (req, res) =>{
         console.log(pathExcel);
 
         //CREO EL ARCHIVO
+        //var excel = create_archive(nombreArchivo, titulos, historialPaciente, pathExcel); // PETICION Web
         create_archive(nombreArchivo, titulos, historialPaciente, pathExcel);
         
-        
+        //PETICION Web
+        // function downloadFile(){return res.status(200).download(excel);}
+        // downloadFile();
         return res.status(200).json({status: 'succes', msg: `Excel Descargado...`});
         
     }catch(err){
