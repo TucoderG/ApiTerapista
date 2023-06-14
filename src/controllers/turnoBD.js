@@ -1,7 +1,7 @@
 const em = require('../errors/messages');
 const { validacionEntrada } = require('./funcionesGeneralesDB');
 const { getConnection, closeConnection, commitPool } = require('../db/accesoDB');
-const { validarTurnosPaciente, validarFechaTurno, getSemana, esDomingo } = require('../funciones/date');
+const { validarTurnosPaciente, validarFechaTurno, getSemana, esDomingo, validarTurnoTerapista } = require('../funciones/date');
 
 const date = new Date();
 const dia = date.getDate();
@@ -51,7 +51,8 @@ const postTurno = async (req, res) =>{
         // Obtengo los datos del body del request
         const { id_terapista, dni_paciente, fecha, desde } = req.body;
 
-        await validarTurnosPaciente(pool, fecha, id_terapista);
+        await validarTurnoTerapista(id_terapista, desde);
+        await validarTurnosPaciente(pool, id_terapista);
         
         if(esDomingo(fecha)) throw new Error(em.DOMINGO);
         
@@ -126,23 +127,25 @@ const putTurno = async (req, res) =>{
     // Obtengo la conexion a la BD
     const pool = await getConnection();
     try{
+        
         if(message !== "") throw new Error(message);
+        
         var { id_turno, fecha } = req.body;
         
         const result = await pool
-        .execute("UPDATE Turno SET fecha = :fecha WHERE id_turno = :id_turno", [ fecha, id_turno ]);
+        .execute("UPDATE Turno SET fecha = :fecha WHERE id_turno = :id_turno AND asistencia LIKE 'Pendiente' AND to_date(fecha, 'DD-MM-YYYY') < to_date(:fecha, 'DD-MM-YYYY')", [ fecha, id_turno ]);
         
         if(result.rowsAffected < 1) throw new Error(em.NO_MODIFICAR_FECHA); 
-    
+        
         commitPool(pool);
 
-        return res.status(200).json({"status": 'succes', msg: `Fecha del Turno ${id_turno} Modificada.`});
+        return res.status(200).json({"status": 'succes', "msg": `Fecha del Turno ${id_turno} Modificada.`});
 
     }catch(error){
         if(error.message.includes("Ingrese")){
-            return res.status(409).json({"status": 'error', error: error.message});
+            return res.status(409).json({"status": 'error', "error": error.message});
         }
-        return res.status(304).json({"status": 'error', error: error.message});
+        return res.status(303).json({"status": 'error', "error": error.message});
 
     }finally{
         closeConnection(pool);                   
@@ -175,14 +178,15 @@ const cancelarTurno = async (req, res) =>{
         if(result.rowsAffected < 1) throw new Error(em.TURNO_NO_CANCELADO); 
         
         commitPool(pool);
-        return res.status(200).json({"status": 'succes', msg: `Turno ${id_turno} Cancelado..`});
+        console.log('Turno Cancelado...')
+        return res.status(200).json({"status": 'succes', "msg": `Turno ${id_turno} Cancelado..`});
 
     }catch(error){
         
         if(error.message.includes("Ingrese")){
-            return res.status(409).json({"status": 'error', error: error.message});
+            return res.status(409).json({"status": 'error', "error": error.message});
         }
-        return res.status(400).json({"status": 'error', error: error.message});
+        return res.status(400).json({"status": 'error', "error": error.message});
 
     }finally{
         closeConnection(pool);                   

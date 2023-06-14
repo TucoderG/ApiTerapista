@@ -1,6 +1,6 @@
 const { getConnection, closeConnection, commitPool } = require('../db/accesoDB');
 const { validacionEntrada } = require('./funcionesGeneralesDB');
-const em = require('../Errors/messages');
+const em = require('../errors/messages');
 
 async function getTerapistaClase(id_terapista){
     const pool = await getConnection();
@@ -14,6 +14,16 @@ async function getTerapistaClase(id_terapista){
     var terapista = [result.rows[0][0], result.rows[0][1], result.rows[0][2]];
     return terapista;
     
+}
+
+async function getTrunoTerapista(id_terapista){
+    const pool = await getConnection();
+
+    const result = await pool.execute("SELECT turno FROM Terapista WHERE id_terapista = :id_terapista", [id_terapista]);
+
+    if(!result.rows[0]) throw new Error(em.NO_ENCONTRE_TERAPISTAS);
+
+    return result.rows[0][0];
 }
 
 
@@ -147,6 +157,7 @@ const putTerapista = async (req, res) =>{
 
 module.exports = {
     getTerapistaClase,
+    getTrunoTerapista,
     getTerapista,
     postTerapista,
     putTerapista,

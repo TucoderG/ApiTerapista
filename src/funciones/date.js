@@ -1,3 +1,4 @@
+const { getTrunoTerapista } = require('../controllers/terapistaDB');
 const em = require('../errors/messages');
 const { tieneDiferenciaDeTreinta } = require('./mats')
 
@@ -87,7 +88,7 @@ const validarFechaTurno = async (pool, fecha, desde, id_terapista) => {
 
 
 // Valida que el paciente tenga turno/s en pendiente 
-const validarTurnosPaciente = async (pool, fecha, id_terapista)=>{
+const validarTurnosPaciente = async (pool, id_terapista)=>{
     const una_semana = getSemana();
     
     const result = await pool.execute("SELECT id_turno, asistencia FROM Turno WHERE to_date(fecha, 'DD-MM-YYYY') BETWEEN to_date(to_char(sysdate), 'DD-MM-YYYY') AND to_date(:una_semana, 'DD-MM-YYYY') AND id_terapista = :id_terapista",
@@ -106,8 +107,27 @@ const validarTurnosPaciente = async (pool, fecha, id_terapista)=>{
     
     
 
+
 }
 
+const validarTurnoTerapista = async (id_terapista, hora) =>{
+
+    const turnoTerapista = await getTrunoTerapista(id_terapista);
+    const arrHora = hora.split(":");
+    switch(turnoTerapista){
+        case 'Mañana':
+            if(!(parseInt(arrHora[0]) >= 8 && parseInt(arrHora[0]) < 14)) throw new Error(em.TURNO_TERAPISTA_INVALIDO);
+        break;
+        case 'Tarde':
+            if(!(parseInt(arrHora[0]) >= 14 && parseInt(arrHora[0]) < 18)) throw new Error(em.TURNO_TERAPISTA_INVALIDO);
+        break;
+        case 'Noche':
+            if(!(parseInt(arrHora[0]) >= 18 && parseInt(arrHora[0]) < 22)) throw new Error(em.TURNO_TERAPISTA_INVALIDO);
+        break;
+        
+    }
+    
+}
 
 
 
@@ -117,5 +137,6 @@ module.exports = {
     getSemana,
     validarFechaTurno,
     validarTurnosPaciente,
+    validarTurnoTerapista,
 
 }

@@ -49,6 +49,7 @@ module.exports = {
     // TERAPISTA
     NO_ENCONTRE_TERAPISTAS: 'No se encontró ningun terapista..',
     NO_MODIFICAR_TURNO_ASIGNADO: 'No se pudo actualizar el turno del terapista...',
+    TURNO_TERAPISTA_INVALIDO: 'El terapista indicado no esta tomando turnos para esos horarios...',
 
     // EXCEL
     NO_DESCARGAR_ARCHIVO: 'Error al descargar el archivo..',

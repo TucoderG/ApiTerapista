@@ -223,6 +223,12 @@ router.post('/postTurno/', authenticacionToken, authenticacionRolPaciente, [
     turnoDB.postTurno);
 
 router.put('/putTurno/', authenticacionToken, authenticacionRolPaciente, [
+    body('dni_paciente', "Ingrese un DNI de Paciente valido..")
+    .trim()
+    .notEmpty()
+    .escape()
+    .isNumeric(),
+
     body('id_turno', "Ingrese un ID de TURNO valido..")
     .trim()
     .notEmpty()
@@ -239,7 +245,7 @@ router.put('/putTurno/', authenticacionToken, authenticacionRolPaciente, [
         
         value = fecha.split("-")
         
-        for(i = 0; i<this.length(value); i++){
+        for(i = 0; i<value.length; i++){
             switch(i){
                 case 0:
                     if(value[i] < 1 || value[i] > 31) throw new Error('Dia ingresado invalido..');
@@ -250,11 +256,12 @@ router.put('/putTurno/', authenticacionToken, authenticacionRolPaciente, [
                 break;
 
                 case 2:
-                    if(value[i] < Date.date.getUTCFullYear() || value[i] > 2100) throw new Error('Año ingresado invalido..')
+                    if(value[i] < date.getUTCFullYear() || value[i] > 2100) throw new Error('Año ingresado invalido..')
                 break;
             }  
-            return fecha;
+            
         }
+        return fecha;
     }),
 
     ],
@@ -356,7 +363,7 @@ router.put('/putTerapista/', authenticacionToken, authenticacionRolTerapista, [
     .notEmpty()
     .escape()
     .isString()
-    .custom((value, req) =>{
+    .custom((value) =>{
         var cont = 0;
         
         if(value !== "Mañana") cont++;

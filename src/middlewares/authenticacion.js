@@ -68,8 +68,11 @@ async function authenticacionRolTerapista(req, res, next){
     try{
         
         if(req.usuario[2] != 'Terapista') throw new Error(em.ROL_NO_PERMITIDO);
-        if(req.usuario[0] != req.body.id_usuario) throw new Error(em.NO_MANIPULAR_OTROS);
-        
+        if(!req.body.id_usuario){
+            if(req.usuario[0] != req.body.id_terapista) throw new Error(em.NO_MANIPULAR_OTROS);
+        }else{
+            if(req.usuario[0] != req.body.id_usuario) throw new Error(em.NO_MANIPULAR_OTROS);
+        }
         return next()
     }catch(error){
 
